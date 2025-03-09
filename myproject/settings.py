@@ -12,6 +12,14 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 import os
 from pathlib import Path
 
+# 비밀번호 파일에서 비밀번호 읽기
+def get_password_from_file(file_path_env_var):
+    file_path = os.environ.get(file_path_env_var)
+    if file_path and os.path.exists(file_path):
+        with open(file_path, 'r') as f:
+            return f.read().strip()
+    return None
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -76,14 +84,17 @@ WSGI_APPLICATION = 'myproject.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 # PostgreSQL 연결 설정 (환경변수 활용)
+# 비밀번호 파일이 있으면 그것을 사용하고, 없으면 환경변수에서 직접 비밀번호를 가져옵니다
+postgres_password = get_password_from_file('DJANGO_POSTGRES_PASSWORD_FILE') or os.environ.get('DJANGO_POSTGRES_PASSWORD', 'postgres')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('DJANGO_DATABASE_NAME', 'mydb'),
-        'USER': os.environ.get('DJANGO_DATABASE_USER', 'myuser'),
-        'PASSWORD': os.environ.get('DJANGO_DATABASE_PASSWORD', 'mypassword'),
-        'HOST': os.environ.get('DJANGO_DATABASE_HOST', 'localhost'),
-        'PORT': os.environ.get('DATABASE_PORT', '5432'),
+        'NAME': os.environ.get('DJANGO_POSTGRES_DB', 'example'),
+        'USER': os.environ.get('DJANGO_POSTGRES_USER', 'postgres'),
+        'PASSWORD': postgres_password,
+        'HOST': os.environ.get('DJANGO_POSTGRES_SERVER', 'postgresdb'),
+        'PORT': os.environ.get('DJANGO_POSTGRES_PORT', '5432'),
     }
 }
 
@@ -122,6 +133,7 @@ DATABASES = {
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -130,8 +142,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # InfluxDB 설정 (Django ORM에서 관리하지 않으므로 단순 설정 값으로 사용)
 INFLUXDB = {
-    'URL': os.environ.get('INFLUXDB_URL', 'http://localhost:8086'),
-    'TOKEN': os.environ.get('INFLUXDB_TOKEN', 'myinfluxtoken'),
-    'ORG': os.environ.get('INFLUXDB_ORG', 'myorg'),
-    'BUCKET': os.environ.get('INFLUXDB_BUCKET', 'mybucket'),
+    'URL': os.environ.get('DJANGO_INFLUXDB_URL', 'http://influxdb:8086'),
+    'TOKEN': os.environ.get('DJANGO_INFLUXDB_TOKEN', 'myinfluxtoken'),
+    'ORG': os.environ.get('DJANGO_INFLUXDB_ORG', 'myorg'),
+    'BUCKET': os.environ.get('DJANGO_INFLUXDB_BUCKET', 'mybucket'),
 }
