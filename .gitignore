@@ -1,0 +1,39 @@
+# 가상 환경 (venv, virtualenv)
+venv/
+.env
+*.env
+*.venv
+
+# Python 캐시 파일
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django 데이터베이스 파일 (SQLite)
+db.sqlite3
+*.sqlite3
+
+# Django static & media files
+/static/
+/media/
+
+# VSCode 설정 파일 (개인 설정 제외)
+.vscode/
+
+# macOS, Windows 시스템 파일
+.DS_Store
+Thumbs.db
+
+# pip 설치 기록
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Migrations 캐시 (하지만 실제 migration 파일은 커밋해야 함)
+*/migrations/__pycache__/
+
+# Jupyter Notebook Checkpoints
+.ipynb_checkpoints/
+
+# Log files (Django 실행 로그)
+logs/
+*.log
